@@ -1,0 +1,205 @@
+﻿#include <iostream>
+
+class my_deque
+{
+public:
+    int data;
+    my_deque* right;
+    my_deque* left;
+};
+
+class my_deque_pointers
+{
+public:
+    my_deque*leftmost = NULL; //самый левый элемент
+    my_deque*rightmost = NULL; // самый правый элемент
+    int deque_units_counter = 0;
+};
+
+my_deque_pointers*pointers = new my_deque_pointers();
+
+
+void push_front(int pushed_data)
+{
+    my_deque* created_element = new my_deque();
+    created_element->data = pushed_data;
+
+    if (pointers -> leftmost == NULL) //если это единственный элемент
+    {
+        pointers -> deque_units_counter++;
+        pointers->leftmost = created_element;
+        pointers->rightmost = created_element;
+
+    }
+    else //если не единственный
+    {
+        created_element->right = pointers->leftmost;
+        pointers->leftmost->left = created_element;
+        pointers->leftmost = created_element;
+        pointers->deque_units_counter++;
+    }
+    std::cout << "ok" << std::endl;
+};
+
+void push_back(int pushed_data)
+{
+    my_deque* created_element = new my_deque();
+    created_element->data = pushed_data;
+
+    if (pointers->leftmost == NULL) //если это единственный элемент
+    {
+        pointers->deque_units_counter++;
+        pointers->leftmost = created_element;
+        pointers->rightmost = created_element;
+    }
+    else //если не единственный
+    {
+        pointers->deque_units_counter++;
+        created_element->left = pointers->rightmost;
+        pointers->rightmost->right = created_element;
+        pointers->rightmost = created_element;
+    }
+    std::cout << "ok" << std::endl;
+};
+
+void front()
+{
+    if (pointers->deque_units_counter == 0)
+    {
+        std::cout << "error" << std::endl;
+    }
+    else
+    {
+        std::cout << pointers->leftmost->data << std::endl;
+    }
+}
+
+void back()
+{
+    if (pointers->deque_units_counter == 0)
+    {
+        std::cout << "error" << std::endl;
+    }
+    else
+    {
+        std::cout << pointers->rightmost->data << std::endl;
+    }
+}
+void pop_back()
+{
+    if (pointers->deque_units_counter == 0)
+    {
+        std::cout << "error" << std::endl;
+    }
+    else if (pointers->deque_units_counter > 1)
+    {
+        pointers->deque_units_counter--;
+        std::cout << pointers->rightmost->data << std::endl;
+        my_deque* buffer = pointers->rightmost->left;
+        free(pointers->rightmost);
+        pointers->rightmost = buffer;
+    }
+    else if (pointers->deque_units_counter == 1)
+    {
+        pointers->deque_units_counter--;
+        std::cout << pointers->rightmost->data << std::endl;
+        free(pointers->rightmost);
+        pointers->rightmost = NULL;
+        pointers->leftmost = NULL;
+    }
+};
+
+
+void pop_front()
+{
+    if (pointers->deque_units_counter == 0)
+    {
+        std::cout << "error" << std::endl;
+    }
+    else if (pointers->deque_units_counter > 1)
+    {
+        pointers->deque_units_counter--;
+        std::cout << pointers->leftmost->data << std::endl;
+        my_deque* buffer = pointers->leftmost->right;
+        free(pointers->leftmost);
+        pointers->leftmost = buffer;
+    }
+    else if (pointers->deque_units_counter == 1)
+    {
+        pointers->deque_units_counter--;
+        std::cout << pointers->leftmost->data << std::endl;
+        free(pointers->leftmost);
+        pointers->leftmost = NULL;
+        pointers->rightmost = NULL;
+    }
+};
+
+void clear()
+{
+    if (pointers->deque_units_counter > 0)
+    {
+        int i = pointers->deque_units_counter;
+        while (i > 1)
+        {
+            my_deque* buffer = pointers->leftmost->right;
+            free(pointers->leftmost);
+            pointers->leftmost = buffer;
+            i--;
+        }
+        free(pointers->leftmost);
+        pointers->leftmost = NULL;
+        pointers->rightmost = NULL;
+        pointers->deque_units_counter = 0;
+    }
+    std::cout << "ok" << std::endl;
+}
+
+int main()
+{
+    std::string curr_command;
+    while (curr_command != "exit")
+    {
+        std::cin >> curr_command;
+
+        if (curr_command == "push_front")
+        {
+            int entered_data;
+            std::cin >> entered_data;
+            push_front(entered_data);
+        }
+        else if (curr_command == "push_back")
+        {
+            int entered_data;
+            std::cin >> entered_data;
+            push_back(entered_data);
+        }
+        else if (curr_command == "pop_front")
+        {
+            pop_front();
+        }
+        else if (curr_command == "pop_back")
+        {
+            pop_back();
+        }
+        else if (curr_command == "size")
+        {
+            std::cout << pointers->deque_units_counter << std::endl;
+        }
+        else if (curr_command == "clear")
+        {
+            clear();
+
+        }
+        else if (curr_command == "front")
+        {
+            front();
+        }
+        else if (curr_command == "back")
+        {
+            back();
+        };
+
+
+    }
+    std::cout << "bye";
+}
